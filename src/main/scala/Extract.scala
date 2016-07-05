@@ -11,8 +11,6 @@ import kafka.producer.Producer
 import kafka.producer.KeyedMessage
 import java.util.Date
 
-import org.json.simple.JSONArray
-import org.json.simple.JSONObject;
 
 
 /**
