@@ -19,7 +19,7 @@ import java.util.Date
 object Extract extends App{
 
 
-  val topic = "finnCars"
+  val topic = "cars_header"
   val props = new Properties()
   props.put("metadata.broker.list", "192.168.56.56:9092")
   props.put("serializer.class", "kafka.serializer.StringEncoder")
