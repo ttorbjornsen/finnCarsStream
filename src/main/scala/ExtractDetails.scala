@@ -14,6 +14,7 @@ import play.api.libs.functional.syntax._
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ListBuffer
+case class AcqCarHeader(title:String, url:String, location:String, year: String, km: String, price: String, load_time:Long, load_date:String)
 
 
 
@@ -22,6 +23,7 @@ import scala.collection.mutable.ListBuffer
   */
 object ExtractDetails {
 
+  /* TODO separate into KafkaProducer object */
   val topic = "cars_detail"
   val props = new Properties()
   props.put("metadata.broker.list", "192.168.56.56:9092")
@@ -32,34 +34,40 @@ object ExtractDetails {
   val producer = new Producer[String, String](config)
 
 
-  val url = "http://m.finn.no/car/used/ad.html?finnkode=78601940"
-  val doc: Document = Jsoup.connect(url).get
-  val carPropElements:Element = doc.select(".mvn+ .col-count2from990").first()
+  def getCars(date:String): = {
 
-
-  var i = 0
-  var carPropListBuffer: ListBuffer[Map[String, String]] = ListBuffer()
-  for (elem:Element <- carPropElements.children()){
-    if ((i % 2) == 0) {
-      val key = elem.text
-      val value = elem.nextElementSibling().text
-      carPropListBuffer += Map(key.asInstanceOf[String] -> value.asInstanceOf[String])
-    }
-    i = i + 1
   }
 
-  val carEquipElements:Element = doc.select(".col-count2upto990").first()
-  var carEquipListBuffer: ListBuffer[String] = ListBuffer()
-  for (elem:Element <- carEquipElements.children()){
-    carEquipListBuffer += elem.text
+
+  def produceCarsDetailKafkaMessage(url:String) = {
+      val url = "http://m.finn.no/car/used/ad.html?finnkode=78601940" //temp
+      val doc: Document = Jsoup.connect(url).get
+      val carPropElements: Element = doc.select(".mvn+ .col-count2from990").first()
+
+
+      var i = 0
+      var carPropListBuffer: ListBuffer[Map[String, String]] = ListBuffer()
+      for (elem: Element <- carPropElements.children()) {
+        if ((i % 2) == 0) {
+          val key = elem.text
+          val value = elem.nextElementSibling().text
+          carPropListBuffer += Map(key.asInstanceOf[String] -> value.asInstanceOf[String])
+        }
+        i = i + 1
+      }
+
+      val carEquipElements: Element = doc.select(".col-count2upto990").first()
+      var carEquipListBuffer: ListBuffer[String] = ListBuffer()
+      for (elem: Element <- carEquipElements.children()) {
+        carEquipListBuffer += elem.text
+      }
+
+      val carInfoElements: Element = doc.select(".object-description p[data-automation-id]").first()
+
+      val jsObj = Json.obj("url" -> url, "properties" -> carPropListBuffer.toList, "information" -> carInfoElements.text, "equipment" -> carEquipListBuffer.toList)
+      producer.send(new KeyedMessage[String, String](topic, jsObj.toString))
+
   }
-
-  val carInfoElements:Element = doc.select(".object-description p[data-automation-id]").first()
-
-  val jsObj = Json.obj("url" -> url, "properties" -> carPropListBuffer.toList, "information" -> carInfoElements.text, "equipment" -> carEquipListBuffer.toList)
-  producer.send(new KeyedMessage[String, String](topic, jsObj.toString))
-
-
 
 
   //if js-engine needed to run js code : web-scraping-nashorn-scala
