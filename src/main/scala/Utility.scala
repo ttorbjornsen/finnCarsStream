@@ -1,5 +1,4 @@
 import java.net.URL
-
 import scala.io.Source
 import scala.util.Try
 
@@ -18,5 +17,4 @@ object Utility  {
         }
       }
   }
-
 }

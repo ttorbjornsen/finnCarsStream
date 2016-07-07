@@ -1,23 +1,15 @@
-import java.net.URL
-
-import scala.concurrent.{ExecutionContext, Future}
-import scala.io.Source
-import ExecutionContext.Implicits.global
-import scala.util.{Failure, Success, Try}
-import kafka.producer.ProducerConfig
 import java.util.Properties
-
-import kafka.producer.Producer
-import kafka.producer.KeyedMessage
-import java.util.Date
+import kafka.producer.{KeyedMessage, Producer, ProducerConfig}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 
 
 /**
   * Created by torbjorn on 23.04.16.
   */
-object Extract extends App{
-
+object KafkaProducer extends App{
 
   val topic = "cars_header"
   val props = new Properties()
@@ -28,7 +20,7 @@ object Extract extends App{
   val config = new ProducerConfig(props)
   val producer = new Producer[String, String](config)
 
-  val hdrPages = Range(1,20,1)
+  val hdrPages = Range(1,2,1) //should be about 200 when in production
 
 
   hdrPages.foreach { page =>
