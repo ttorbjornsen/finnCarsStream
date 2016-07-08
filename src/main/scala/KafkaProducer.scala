@@ -30,7 +30,7 @@ object KafkaProducer extends App{
     hdrPages1.map{page =>
       val url = "https://extraction.import.io/query/extractor/048ad769-f701-42a4-9ed3-5593b3ed0cdc?_apikey=6f684a69407b449fa8d1a8ea294f5a6bd9e7c426d14291abefb6c0dbc492734acac43b1be257f10739a580c935718ae96d03d3da27d0a4da95c2d6b411a65707583f18d38ae3ccdfd62cc74ff4791e27&url=http%3A%2F%2Fm.finn.no%2Fcar%2Fused%2Fsearch.html%3Fbody_type%3D4%26rows%3D100%26page%3D" + page
       Utility.saveFinnCarsPageResults(producer, topic, url)
-      println("Page " + page + " written to Kafka")
+      println("Page " + page + " written to Kafka topic " + topic)
       }
     }
 

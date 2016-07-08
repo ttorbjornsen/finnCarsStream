@@ -27,13 +27,13 @@ object Utility  {
   }
 
   def saveFinnCarsPageResults(producer:Producer[String,String], topic:String, url: String):Unit = {
-    val f = Future{Source.fromURL(new URL(url)).mkString}
-    val action = f.map {results =>
+    val pageResult = Future{Source.fromURL(new URL(url)).mkString}
+    val action = pageResult.map {results =>
       producer.send(new KeyedMessage[String, String](topic, results))
     } recover{
       case t: Throwable => {
         t.printStackTrace()
-        saveFinnCarsPageResults(producer, topic, url)
+        saveFinnCarsPageResults(producer, topic, url) //retry
       }
     }
 
