@@ -30,8 +30,14 @@ object Utility  {
     val f = Future{Source.fromURL(new URL(url)).mkString}
     val action = f.map {results =>
       producer.send(new KeyedMessage[String, String](topic, results))
+    } recover{
+      case t: Throwable => {
+        t.printStackTrace()
+        saveFinnCarsPageResults(producer, topic, url)
+      }
     }
-    Await.result(action, 20000 millis)
+
+    Await.result(action, 2 minutes)
   }
 
 
