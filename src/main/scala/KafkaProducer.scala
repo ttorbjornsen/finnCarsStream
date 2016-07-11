@@ -20,9 +20,9 @@ object KafkaProducer extends App{
   props.setProperty("request.required.acks", "1")
   val producer = new Producer[String, String](new ProducerConfig(props))
 
-  val numberOfPages = 4 //get input from parameter arguments and automatically split evenly in two ranges
-  val hdrPages1 = Range(1,3,1)
-  val hdrPages2 = Range(3,5,1)
+  val numberOfPages = 2 //get input from parameter arguments and automatically split evenly in two ranges
+  val hdrPages1 = Range(1,2,1)
+  val hdrPages2 = Range(2,3,1)
 
   // each Future will async try to extract page results from Kafka and
 
