@@ -11,3 +11,7 @@ libraryDependencies += "org.apache.kafka" %% "kafka" % "0.8.2.0"
 libraryDependencies += "com.typesafe.play" %% "play-json" % "2.2.1" % "provided"
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.6" % "provided"
 
+assemblyMergeStrategy in assembly := {
+  case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+  case x => MergeStrategy.first
+}
